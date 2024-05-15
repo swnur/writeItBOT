@@ -1,54 +1,59 @@
 import requests
+import json
 
-API_KEY = 'j1mNmf33oEaxpHh1'
+def grammar_check(parsed_result):
+    if parsed_result['status']:
+        grammar_errors = [error for error in parsed_result['errors'] if error['type'] == 'grammar']
+        if grammar_errors:
+            message = 'Grammar mistakes found:\n'
+            for error in grammar_errors:
+                message += f"{error['bad']}, suggested {', '.join(error['better'])}. Description: {error['description']['en']}\n"
+            return message
+        else:
+            return 'No grammar mistakes found.'
+    else:
+        return 'Failed to check grammar. Please try again later.'
 
-def parse_errors(response):
-    errors_dict = {}
-    if response.get('status', False) and response.get('response'):
-        errors = response['response'].get('errors', [])
-        for error_info in errors:
-            error_id = error_info.get('id')
-            offset = error_info.get('offset')
-            length = error_info.get('length')
-            bad_word = error_info.get('bad')
-            suggestions = error_info.get('better', [])
-            error_type = error_info.get('type')
-            errors_dict[error_id] = {
-                'offset': offset,
-                'length': length,
-                'bad_word': bad_word,
-                'suggestions': suggestions,
-                'error_type': error_type
-            }
-    return errors_dict
+def spell_check(parsed_result):
+    if parsed_result['status']:
+        spell_errors = [error for error in parsed_result['errors'] if error['type'] == 'spelling']
+        if spell_errors:
+            message = 'Spelling mistakes found:\n'
+            for error in spell_errors:
+                message += f"{error['bad']}, suggested {', '.join(error['better'])}. Description: {error['description']['en']}\n"
+            return message
+        else:
+            return 'No spelling mistakes found.'
+    else:
+        return 'Failed to check spelling. Please try again later.'
 
-def grammar_check(text):
-    # Make a request to the TextGears API for grammar checking
-    response = requests.get('https://api.textgears.com/grammar', params={'text': text, 'key': API_KEY})
-    # Process the response and extract grammar errors
-    # For simplicity, let's assume the response is in JSON format
+def analyze_text(parsed_result):
+    if parsed_result['status']:
+        # Implement analysis logic based on the parsed result here
+        return 'Analysis completed.'
+    else:
+        return 'Failed to analyze text. Please try again later.'
+
+def correct_text(data):
+    # Make a request to the TextGears API for text analysis
+    response = requests.get('https://api.textgears.com/correct', params={'text': text, 'key': API_KEY})
+
+    # Check if the request was successful
     if response.status_code == 200:
-        # Process the response and extract grammar errors
-        # For simplicity, let's assume the response is in JSON format
-        dict_err = parse_errors(response)
-        # Return the number of grammar errors found
-        return f"Grammar errors found: {len(dict_err)}"
+        # Parse the response JSON
+        response_data = response.json()
+
+        # Check the status of the response
+        if response_data.get('status', False):
+            # If there are corrections, return the corrected text
+            corrected_text = response_data['response'].get('corrected')
+            if corrected_text:
+                return corrected_text
+            else:
+                return "No errors detected."
+        else:
+            # If there are no corrections, return a message indicating no errors detected
+            return "No errors detected."
     else:
         # If the request failed, return an error message
-        return f"Failed to check grammar. Error code: {response.status_code}"
-
-def spell_check(text):
-    # Make a request to the TextGears API for spell checking
-    response = requests.get('https://api.textgears.com/check.php', params={'text': text, 'key': 'YOUR_TEXTGEARS_API_KEY', 'language': 'en-US'})
-    # Process the response and extract spelling errors
-    # For simplicity, let's assume the response is in JSON format
-    errors = response.json().get('errors', [])
-    return f"Spelling errors found: {len(errors)}"
-
-def analyze_text(text):
-    # Make a request to the TextGears API for text analysis
-    response = requests.get('https://api.textgears.com/check.php', params={'text': text, 'key': 'YOUR_TEXTGEARS_API_KEY', 'language': 'en-US'})
-    # Process the response and extract analysis data
-    # For simplicity, let's assume the response is in JSON format
-    analysis = response.json().get('analysis', {})
-    return f"Text analysis: {analysis}"
+        return f"Failed to correct text. Error code: {response.status_code}"
