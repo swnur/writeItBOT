@@ -6,7 +6,7 @@ def generate_user_statistics(user_info):
     # Extract user data
     requests = user_info.get('requests', 0)
     words = user_info.get('words', 0)
-    grammar_errors = user_info.get('errors', {'grammar': 0, 'spelling': 0, 'punctuation': 0})
+    grammar_errors = user_info.get('errors', 0)
 
     # Plot statistics
     labels = ['Requests', 'Words']
@@ -45,10 +45,10 @@ def generate_user_statistics(user_info):
         plt.savefig(plt_path_grammar)
         plt.close()
 
-        return {'error_type_distribution': 'error_type_distribution.png',
-                'percentage_chance_of_mistake': 'percentage_chance_of_mistake.png'}
+        return {'error_type_distribution': 'user_statistics.png',
+                'percentage_chance_of_mistake': 'grammar_errors.png'}
 
-    return {'error_type_distribution': 'error_type_distribution.png',
+    return {'error_type_distribution': 'user_statistics.png',
             'percentage_chance_of_mistake': 'None'}
 
 
@@ -62,6 +62,7 @@ def generate_statistics(response, user_text, user_info):
     for error in errors:
         error_type = error['type']
         error_types[error_type] = error_types.get(error_type, 0) + 1
+        user_info['errors'][error_type] = error_types.get(error_type, 0) + 1
 
     # Error type distribution
     labels = list(error_types.keys())

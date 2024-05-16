@@ -24,19 +24,19 @@ def handle_start(message):
     user_id = message.from_user.id
     user_info[user_id] = {'requests': 0, 'words': 0, 'errors': {}}
     bot.send_message(message.from_user.id,
-                    "Hello! This bot helps you with various text-related tasks using the TextGears API. Please use "
-                    "send us our text.")
+                     "Hello! This bot helps you with various text-related tasks using the TextGears API. Please use "
+                     "send us our text.")
 
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
     print("help has been chosen")
     help_text = """
-        Here are the available commands:
-        /start - Get a friendly greeting from the bot.
-        /statistics - Get analyses of the text.
-        In case of sending text without any commands. You are just going to get a corrected version of you text.
-        """
+   Here are the available commands:
+   /start - Get a friendly greeting from the bot.
+   /statistics - Get analyses of the text.
+   In case of sending text without any commands. You are just going to get a corrected version of you text.
+   """
 
     bot.send_message(message.from_user.id, help_text)
 
@@ -94,8 +94,6 @@ def handle_message(message):
     # Delete PNGs from the script
     os.remove(stats['error_type_distribution'])
     os.remove(stats['percentage_chance_of_mistake'])
-
-    print(user_info)
 
 
 # Start the bot
