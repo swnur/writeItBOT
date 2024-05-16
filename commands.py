@@ -1,4 +1,5 @@
-# from textgears import grammar_check, spell_check, analyze_text, correct_text
+import requests
+import json
 
 def parse_response(result):
     parsed_result = {}
@@ -17,8 +18,8 @@ def parse_response(result):
         parsed_result['status'] = False
     return parsed_result
 
-def check_text(text):
-    api_key = '7fFGgE6Nm4jKqxrX'
+
+def check_text(text, api_key):
     url = 'https://api.textgears.com/analyze'
     params = {
         'key': api_key,
@@ -36,9 +37,9 @@ def check_text(text):
         print("Error:", response.status_code)
         return None
 
-def process_text(command):
 
-    result = check_text(text)
+def process_text(text, api_key):
+    result = check_text(text, api_key)
 
     if result:
         parsed_result = parse_response(result)
@@ -49,9 +50,9 @@ def process_text(command):
         return "Failed to check the text."
 
 
-def correct_text(data):
+def correct_text(data, api_key):
     # Make a request to the TextGears API for text analysis
-    response = requests.get('https://api.textgears.com/correct', params={'text': text, 'key': API_KEY})
+    response = requests.get('https://api.textgears.com/correct', params={'text': data, 'key': api_key})
 
     # Check if the request was successful
     if response.status_code == 200:
