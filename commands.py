@@ -28,13 +28,12 @@ def check_text(text, api_key):
         'ai': 'true'  # Enable AI for better quality analysis
     }
 
-    response = requests.get(url, params=params)
-
-    if response.status_code == 200:
-        result = response.json()
-        return result
-    else:
-        print("Error:", response.status_code)
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Raise an error for bad HTTP status codes
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
         return None
 
 
@@ -42,34 +41,35 @@ def process_text(text, api_key):
     result = check_text(text, api_key)
 
     if result:
-        parsed_result = parse_response(result)
-        print(parsed_result)
-
-        return parsed_result
+        try:
+            parsed_result = parse_response(result)
+            print(parsed_result)
+            return parsed_result
+        except json.JSONDecodeError as e:
+            print("Error decoding JSON:", e)
+            return None
     else:
         return "Failed to check the text."
 
 
 def correct_text(data, api_key):
-    # Make a request to the TextGears API for text analysis
-    response = requests.get('https://api.textgears.com/correct', params={'text': data, 'key': api_key})
+    try:
+        response = requests.get('https://api.textgears.com/correct', params={'text': data, 'key': api_key})
+        response.raise_for_status()  # Raise an error for bad HTTP status codes
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Parse the response JSON
         response_data = response.json()
 
-        # Check the status of the response
         if response_data.get('status', False):
-            # If there are corrections, return the corrected text
             corrected_text = response_data['response'].get('corrected')
             if corrected_text:
                 return corrected_text
             else:
                 return "No errors detected."
         else:
-            # If there are no corrections, return a message indicating no errors detected
             return "No errors detected."
-    else:
-        # If the request failed, return an error message
-        return f"Failed to correct text. Error code: {response.status_code}"
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
+        return f"Failed to correct text. Error: {str(e)}"
+    except json.JSONDecodeError as e:
+        print("Error decoding JSON:", e)
+        return None
