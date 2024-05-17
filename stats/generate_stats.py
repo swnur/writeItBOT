@@ -44,12 +44,12 @@ def generate_user_statistics(user_info):
         plt.close()
 
         # Calculate the average number of errors per word and per sentence
-        errors_per_word = user_info['errors']['spelling'] / words * 100
-        errors_per_sentence = user_info['errors']['grammar'] / words * 100
+        spell_errors_per_word = user_info['errors']['spelling'] / words * 100
+        grammar_errirs_per_word = user_info['errors']['grammar'] / words * 100
 
         # Plotting the bar chart
         labels = ['Grammar Errors per Sentence', 'Spelling Errors per Word']
-        values = [errors_per_sentence, errors_per_word]
+        values = [grammar_errirs_per_word, spell_errors_per_word]
 
         plt.figure(figsize=(8, 6))
         x = np.arange(len(labels))
@@ -96,17 +96,16 @@ def generate_statistics(response, user_text, user_info):
     plt.savefig('error_type_distribution.png')
     plt.close()
 
-    # Extracting word and sentence count
+    # Extracting word count
     words = len(user_text.split())
-    sentences = len(user_text.split('.'))
 
     # Calculate the average number of errors per word and per sentence
-    errors_per_word = error_types['spelling'] / words * 100
-    errors_per_sentence = error_types['grammar'] / words * 100
+    spell_errors_per_word = error_types['spelling'] / words * 100
+    grammar_errors_per_word = error_types['grammar'] / words * 100
 
     # Plotting the bar chart
     labels = ['Grammar Errors per Sentence', 'Spelling Errors per Word']
-    values = [errors_per_sentence, errors_per_word]
+    values = [grammar_errors_per_word, spell_errors_per_word]
 
     plt.figure(figsize=(8, 6))
     x = np.arange(len(labels))
