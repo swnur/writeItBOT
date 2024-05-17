@@ -43,7 +43,7 @@ def generate_user_statistics(user_info):
         plt.savefig('error_type_distribution.png')
         plt.close()
 
-        # Calculate the average number of errors per word and per sentence
+        # Calculate the average number of errors per word
         spell_errors_per_word = user_info['errors']['spelling'] / words * 100
         grammar_errirs_per_word = user_info['errors']['grammar'] / words * 100
 
@@ -99,7 +99,7 @@ def generate_statistics(response, user_text, user_info):
     # Extracting word count
     words = len(user_text.split())
 
-    # Calculate the average number of errors per word and per sentence
+    # Calculate the average number of errors per word
     spell_errors_per_word = error_types['spelling'] / words * 100
     grammar_errors_per_word = error_types['grammar'] / words * 100
 
