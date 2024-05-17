@@ -27,7 +27,7 @@ def handle_start(message):
         user_info[user_id] = {'requests': 0, 'words': 0, 'errors': {}}
     # Send greeting message
     bot.send_message(message.from_user.id,
-                     "Hello! This bot helps you with various text-related tasks using the TextGears API. Please send us your text.")
+                     "Hello! This bot helps you with various writing-related task. Please send us your text.")
 
     print(user_info)
 
@@ -38,7 +38,7 @@ def handle_help(message):
     help_text = """
    Here are the available commands:
    /start - Get a friendly greeting from the bot.
-   /statistics - Get analyses of the text.
+   /statistics - Get analysis of the text.
    In case of sending text without any commands. You are just going to get a corrected version of you text.
    """
     bot.send_message(message.from_user.id, help_text)
